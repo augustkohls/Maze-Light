@@ -6,17 +6,20 @@ using TMPro;
 
 public class Player_Controller : MonoBehaviour
 {
-	
 	private SpriteRenderer sprite;
 	private Animator anim;
 	private enum MovementState {idleDown, idleSide, idleUp, walkDown, walkSide, walkUp}
-	
-    public float speed = 120;
+	MovementState state = MovementState.idleDown;
+	private Vector3 sprite_direction = new Vector3(0,-1,0);
+
+	public float speed = 120;
 	public float rotationSpeed = 1000;
 	
     private Rigidbody2D rb;
+	private Quaternion toRotation;
 	
-    private float movementX;
+
+	private float movementX;
     private float movementY;
 
 	public GameObject projectile;
@@ -25,13 +28,16 @@ public class Player_Controller : MonoBehaviour
 	private float next_time_ranged_attack_possible = 0.0f;
 	
 	public int attack_radius = 3;
-	
+	public int ammo;
+	public GameObject bullet_icon;
+
 	//private Animation anim;
-	
-	
-    // Start is called before the first frame update
-    void Start()
+
+
+	// Start is called before the first frame update
+	void Start()
     {
+		ammo = 3;
 		//transform.Rotate(0,0,90);
         rb = GetComponent<Rigidbody2D>();
 		rb.freezeRotation = true;
@@ -62,44 +68,49 @@ public class Player_Controller : MonoBehaviour
         Vector2 movement = new Vector2(movementX, movementY);
 		
 		movement.Normalize();
-		// transform.Translate(movement*speed*Time.deltaTime, Space.World);
+		if(movementY == 0) { rb.velocity = new Vector3(rb.velocity.x, 0, 0); ;}
+		if(movementX == 0) { rb.velocity = new Vector3(0,rb.velocity.y, 0); }
+		//transform.Translate(movement*speed*Time.deltaTime, Space.World);
 		rb.AddForce(movement * speed);
 	    if (movement == new Vector2(1.0f,0.0f) || movement == new Vector2(-1.0f,0.0f) || movement == new Vector2(0.0f,1.0f) || movement == new Vector2(0.0f,-1.0f))//(movement != Vector2.zero && movement != new Vector2(1.0f,1.0f) && movement != new Vector2(-1.0f,-1.0f))
 		{
-			Quaternion toRotation = Quaternion.LookRotation(transform.forward, movement);
-			transform.rotation = toRotation;
+			toRotation = Quaternion.LookRotation(transform.forward, movement);
+			//transform.rotation = toRotation;
 			//Quaternion rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotationSpeed*Time.deltaTime);
 			//rb.MoveRotation(rotation);
 		}
     }
-	
+
 	// make this a public function so that when we get the bot code working we can use it
-	public void shoot_projectile ()
+	public void shoot_projectile()
 	{
-		float spawnDistance = 1.5f;
-		Vector3 playerPos = transform.position;
-		Quaternion playerRotation = transform.rotation;
-		Vector3 spawnPos = playerPos + transform.up*spawnDistance;
-		var my_projectile = Instantiate(projectile,  spawnPos, playerRotation);
-		//set the collison box of the particle to be wide and on all sides
-		// give the projectile the same tag as the parent
-		my_projectile.tag = gameObject.tag;
-		my_projectile.GetComponent<Move_Projectile>().projectile_owner = gameObject.name;
+		if (ammo != 0) {
+			Destroy(bullet_icon.transform.GetChild(ammo-1).gameObject);
+			ammo = ammo - 1;
+			float spawnDistance = 1.5f;
+			Vector3 playerPos = transform.position;
+			Quaternion playerRotation = toRotation;
+			Vector3 spawnPos = playerPos + sprite_direction * spawnDistance;
+			var my_projectile = Instantiate(projectile, spawnPos, playerRotation);
+			//set the collison box of the particle to be wide and on all sides
+			// give the projectile the same tag as the parent
+			my_projectile.tag = gameObject.tag;
+			my_projectile.GetComponent<Move_Projectile>().projectile_owner = gameObject.name;
+		}
 	}
+
+
 	private void check_animation()
 	{
-		Transform child = transform.GetChild(0);
-		child.localEulerAngles = new Vector3(0,0,0)-this.transform.localEulerAngles;
-		MovementState state = MovementState.idleDown;
-		if(rb.velocity.y > 0) { state = MovementState.walkUp;}
-		if(rb.velocity.y < 0) { state = MovementState.walkDown;}
-		if(rb.velocity.x < 0) { state = MovementState.walkSide; sprite.flipX = false; }
-		if(rb.velocity.x > 0) { state = MovementState.walkSide; sprite.flipX = true;}
+		if (rb.velocity.y > 0) { state = MovementState.walkUp; sprite.flipX = false; sprite_direction = new Vector3(0, 1, 0); }
+		if(rb.velocity.y < 0) { state = MovementState.walkDown; sprite.flipX = false; sprite_direction = new Vector3(0, -1, 0); }
+		if(rb.velocity.x < 0) { state = MovementState.walkSide; sprite.flipX = false; sprite_direction = new Vector3(-1, 0, 0); }
+		if(rb.velocity.x > 0) { state = MovementState.walkSide; sprite.flipX = true; sprite_direction = new Vector3(1, 0, 0); }
 		if(rb.velocity.y == 0 && rb.velocity.x == 0) { 
-			if(transform.localEulerAngles.z == 0) {state = MovementState.idleUp;}
-			if(transform.localEulerAngles.z == 180) {state = MovementState.idleDown;}
-			if(transform.localEulerAngles.z == 90) {state = MovementState.idleSide; sprite.flipX = false;}
-			if(transform.localEulerAngles.z == 270) {state = MovementState.idleSide; sprite.flipX = true;}
+			if(toRotation.eulerAngles.z == 0) {state = MovementState.idleUp; sprite.flipX = false; sprite_direction = new Vector3(0, 1, 0); }
+			if(toRotation.eulerAngles.z == 180) {state = MovementState.idleDown; sprite.flipX = false; sprite_direction = new Vector3(0, -1, 0); }
+			if(toRotation.eulerAngles.z == 90) {state = MovementState.idleSide; sprite.flipX = false; sprite_direction = new Vector3(-1, 0, 0); }
+			if(toRotation.eulerAngles.z == 270) {state = MovementState.idleSide; sprite.flipX = true; sprite_direction = new Vector3(1, 0, 0); }
 		}
 		anim.SetInteger("state", (int) state);	
 	}
