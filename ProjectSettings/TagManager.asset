@@ -6,6 +6,7 @@ TagManager:
   tags:
   - RightArm
   - LeftArm
+  - Bullets
   layers:
   - Default
   - TransparentFX

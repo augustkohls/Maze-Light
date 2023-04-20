@@ -5,23 +5,21 @@ using UnityEngine;
 public class Move_Projectile : MonoBehaviour
 {
 	public float projectile_speed = 20;
-	public GameObject projectile;
-	public string projectile_owner = "player_1";
 	private float spawn_timer;
 	private int to_rotate;
-	private bool collision_is_rotation;
-	public Transform leftside;
-	public Transform rightside;
-	
+	public GameObject rightarm;
+	public GameObject leftarm;
+	public GameObject projectile;
 
 	private Collider2D head_collider;
 	
     private Rigidbody2D rb;
-	
-    // Start is called before the first frame update
-    void Start()
-    {
+	public string projectile_owner = "player1";
 
+
+	// Start is called before the first frame update
+	void Start()
+    {
 		spawn_timer = Time.time;
 		rb = GetComponent<Rigidbody2D>();
         rb.velocity = transform.up * projectile_speed;
@@ -31,15 +29,25 @@ public class Move_Projectile : MonoBehaviour
     {
 		if(Time.time - spawn_timer > 1)
 		{
-			//Lower intensity then die
 			Destroy(projectile);
 		}
 	}
 	
 	void OnCollisionEnter2D(Collision2D collision)
 	{
-		int to_rotate_projectile = maze_route_detector.to_rotate;
-		transform.Rotate(0,0, to_rotate_projectile);
+		if (leftarm.GetComponent<maze_route_detector>().left_is_open == true)
+		{
+			to_rotate = 90;
+		}
+		else if (rightarm.GetComponent<maze_route_detector>().right_is_open == true)
+		{
+			to_rotate = -90;
+		}
+		else
+		{
+			to_rotate = 180;
+		}
+		projectile.transform.Rotate(0,0, to_rotate);
 		rb.velocity = transform.up * projectile_speed;
 	}
 	// we can add on collision effects

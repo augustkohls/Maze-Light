@@ -319,6 +319,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f18e52136486e61478f1b3ec416afa8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  left_is_open: 0
+  right_is_open: 0
 --- !u!1 &4797875817572189338
 GameObject:
   m_ObjectHideFlags: 0
@@ -390,6 +392,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f18e52136486e61478f1b3ec416afa8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  left_is_open: 0
+  right_is_open: 0
 --- !u!1 &5065560464190615632
 GameObject:
   m_ObjectHideFlags: 0
@@ -514,10 +518,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectile_speed: 30
+  rightarm: {fileID: 4483492090254627982}
+  leftarm: {fileID: 4797875817572189338}
   projectile: {fileID: 5065560464190615632}
   projectile_owner: player_1
-  leftside: {fileID: 5240750041312166184}
-  rightside: {fileID: 7758780201233104653}
 --- !u!50 &23940353773903890
 Rigidbody2D:
   serializedVersion: 4

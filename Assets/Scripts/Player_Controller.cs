@@ -29,7 +29,7 @@ public class Player_Controller : MonoBehaviour
 	
 	public int attack_radius = 3;
 	public int ammo;
-	public GameObject bullet_icon;
+	public GameObject bullets_parent;
 
 	//private Animation anim;
 
@@ -38,7 +38,6 @@ public class Player_Controller : MonoBehaviour
 	void Start()
     {
 		ammo = 3;
-		//transform.Rotate(0,0,90);
         rb = GetComponent<Rigidbody2D>();
 		rb.freezeRotation = true;
 		sprite = GetComponentInChildren<SpriteRenderer>();
@@ -70,14 +69,11 @@ public class Player_Controller : MonoBehaviour
 		movement.Normalize();
 		if(movementY == 0) { rb.velocity = new Vector3(rb.velocity.x, 0, 0); ;}
 		if(movementX == 0) { rb.velocity = new Vector3(0,rb.velocity.y, 0); }
-		//transform.Translate(movement*speed*Time.deltaTime, Space.World);
 		rb.AddForce(movement * speed);
 	    if (movement == new Vector2(1.0f,0.0f) || movement == new Vector2(-1.0f,0.0f) || movement == new Vector2(0.0f,1.0f) || movement == new Vector2(0.0f,-1.0f))//(movement != Vector2.zero && movement != new Vector2(1.0f,1.0f) && movement != new Vector2(-1.0f,-1.0f))
 		{
 			toRotation = Quaternion.LookRotation(transform.forward, movement);
-			//transform.rotation = toRotation;
-			//Quaternion rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotationSpeed*Time.deltaTime);
-			//rb.MoveRotation(rotation);
+
 		}
     }
 
@@ -85,7 +81,7 @@ public class Player_Controller : MonoBehaviour
 	public void shoot_projectile()
 	{
 		if (ammo != 0) {
-			Destroy(bullet_icon.transform.GetChild(ammo-1).gameObject);
+			Destroy(bullets_parent.transform.GetChild(ammo-1).gameObject);
 			ammo = ammo - 1;
 			float spawnDistance = 1.5f;
 			Vector3 playerPos = transform.position;
