@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class maze_route_detector : MonoBehaviour
 {
-    public bool left_is_open;
-    public bool right_is_open;
+    public bool is_open;
 
     // Start is called before the first frame update
     void Start()
@@ -20,26 +19,13 @@ public class maze_route_detector : MonoBehaviour
 
 	void OnTriggerExit2D(Collider2D other)
 	{
-        if (this.tag == "RightArm")
-        {
-            right_is_open = true;
-        }
-        if (this.tag == "LeftArm")
-        {
-            left_is_open = true;
-        }
+            is_open = true;
+
         
     }
 
     void OnTriggerEnter2D(Collider2D collider2D)
     {
-        if (this.tag == "RightArm")
-        {
-            right_is_open = false;
-        }
-        if (this.tag == "LeftArm")
-        {
-            left_is_open = false;
-        }
-    }
+            is_open = false;
+	}
 }

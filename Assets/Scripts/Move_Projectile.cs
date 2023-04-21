@@ -35,11 +35,11 @@ public class Move_Projectile : MonoBehaviour
 	
 	void OnCollisionEnter2D(Collision2D collision)
 	{
-		if (leftarm.GetComponent<maze_route_detector>().left_is_open == true)
+		if (leftarm.GetComponent<maze_route_detector>().is_open == true)
 		{
 			to_rotate = 90;
 		}
-		else if (rightarm.GetComponent<maze_route_detector>().right_is_open == true)
+		else if (rightarm.GetComponent<maze_route_detector>().is_open == true)
 		{
 			to_rotate = -90;
 		}
