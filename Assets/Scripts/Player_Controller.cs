@@ -40,8 +40,8 @@ public class Player_Controller : MonoBehaviour
 		ammo = 3;
         rb = GetComponent<Rigidbody2D>();
 		rb.freezeRotation = true;
-		sprite = GetComponentInChildren<SpriteRenderer>();
-		anim = GetComponentInChildren<Animator>();
+		sprite = GetComponent<SpriteRenderer>();
+		anim = GetComponent<Animator>();
 		
     }
 
